@@ -1,6 +1,6 @@
 # CI Evidence Gate — Agent Bootstrap
 
-Last updated: 2026-08-29. Repository status: **v0.1.0 release candidate**.
+Last updated: 2026-08-29. Repository status: **public v0.1.0**.
 
 Read this file first, followed by `README.md`, `action.yml`, the example
 manifest, the source, and `docs/PUBLIC_RELEASE_PLAN.md`.

@@ -1,8 +1,8 @@
 # CI Evidence Gate — Public Release Plan
 
-Status: v0.1.0 release candidate; owner authorized public release on 2026-08-29.
-Completed items below describe the candidate. Marketplace account acceptance and
-external launch posts remain separate human/account actions.
+Status: public v0.1.0; owner authorized and released on 2026-08-29. Marketplace
+account acceptance and external launch posts remain separate human/account
+actions.
 
 ## Release thesis
 
@@ -108,13 +108,14 @@ sample valid proposal receives a reproducible sufficient receipt.
 
 Do not execute without explicit owner authorization.
 
-1. [ ] Change repository visibility to public.
-2. [ ] Verify license, README/demo, RFC, description, topics, and clean history.
-3. [ ] Enable secret scanning, push protection, vulnerability reporting, code
+1. [x] Change repository visibility to public.
+2. [x] Verify license, README/demo, RFC, description, topics, and clean history.
+3. [x] Enable secret scanning, push protection, vulnerability reporting, code
        scanning, and dependency review where available.
 4. [ ] Upload social preview and pin the repository.
-5. [ ] Run the public sample from a separate repository before tagging.
-6. [ ] Tag immutable `v0.1.0`, create human release notes, and publish the exact
+5. [x] Run a disposable public PR smoke through the real Checks/Actions APIs;
+       all `test`, `lint`, `evidence`, and `dependency-review` checks passed.
+6. [x] Tag immutable `v0.1.0`, create human release notes, and publish the exact
        full commit SHA users should pin.
 7. [ ] Submit to GitHub Marketplace if eligibility and metadata are current.
 8. [ ] Submit to relevant Actions, CI, supply-chain, and agent-tool lists.
