@@ -16,7 +16,7 @@ inputs:
     required: false
     default: ${{ github.repository }}
   token:
-    description: Read-only token with actions:read and checks:read
+    description: GITHUB_TOKEN with actions:read and checks:read
     required: false
     default: ${{ github.token }}
   manifest:
@@ -28,7 +28,7 @@ inputs:
     required: false
     default: ci-evidence-receipt.json
   api-url:
-    description: GitHub REST API origin
+    description: GitHub REST API base URL; must match the trusted github.api_url context
     required: false
     default: ${{ github.api_url }}
   api-version:
@@ -65,5 +65,9 @@ runs:
         EVIDENCE_RECEIPT: ${{ inputs.receipt }}
         EVIDENCE_API_URL: ${{ inputs.api-url }}
         EVIDENCE_API_VERSION: ${{ inputs.api-version }}
+        EVIDENCE_TRUSTED_REPOSITORY: ${{ github.repository }}
+        EVIDENCE_TRUSTED_API_URL: ${{ github.api_url }}
+        EVIDENCE_TRUSTED_EVENT_NAME: ${{ github.event_name }}
+        EVIDENCE_TRUSTED_EVENT_PATH: ${{ github.event_path }}
         PYTHONPATH: ${{ github.action_path }}/src
       run: python3 -m ci_evidence_gate.cli evaluate

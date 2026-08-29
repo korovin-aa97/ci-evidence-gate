@@ -1,7 +1,7 @@
 # RFC: CI Evidence Gate v1
 
-Status: v0.1.0 implementation contract  
-Last reviewed: 2026-08-29
+Status: v0.1.3 implementation contract
+Last reviewed: 2026-08-30
 
 ## Abstract
 
@@ -23,15 +23,17 @@ program correctness or test adequacy.
 - **GitHub** is trusted for Git object identity, check-run facts, GitHub App
   identity, and Actions workflow-run facts returned by its APIs.
 - **Evidence producers** are GitHub Actions jobs identified by exact job name,
-  workflow path, app slug, event, head SHA, and run attempt.
+  workflow path, app slug, event, pull-request base/head association, head SHA,
+  workflow run, and concrete job attempt.
 - **Gate release** is trusted only when referenced by an immutable full commit
   SHA. Its bundled Python code is the policy evaluator.
 - **Runner** is trusted for this v1 deployment. A compromised runner can alter
   process memory, Git objects, API responses, or the output receipt.
 
-The candidate must not control the gate invocation, policy source, token,
-`base-sha`, `head-sha`, `repository`, or `api-url`. These values come from the
-workflow and GitHub event context, never from pull-request text or outputs.
+The candidate must not control the gate invocation, policy source, token, or
+manifest path. In Action mode, `base-sha`, `head-sha`, `repository`, and
+`api-url` are checked against GitHub-owned context before the token is used.
+They must never come from pull-request text or producer outputs.
 
 ## Inputs
 
@@ -52,7 +54,8 @@ offline evidence file. Offline fixture input is a hidden CLI test facility.
 expected checks, and path surfaces. Check identity is the tuple:
 
 ```text
-(exact name, app slug, workflow path, event, exact head SHA, latest attempt)
+(exact name, app slug, workflow path, event, PR base/head, exact head SHA,
+ workflow run, concrete job, latest job attempt)
 ```
 
 Surface patterns use `/` separators. `*` does not cross a directory boundary;
@@ -79,13 +82,18 @@ The exact supplied base SHA is still bound into the receipt and holds policy.
 ## Evidence collection and selection
 
 The evaluator calls `GET /repos/{owner}/{repo}/commits/{head}/check-runs` with
-`filter=all`, then correlates each name match to an Actions run ID from its
-`details_url`. It reads that run and requires exact head SHA, workflow path,
-event, and a positive `run_attempt`.
+`filter=all`, then correlates each name match to both an Actions run ID and job
+ID from its `details_url`. It reads that run and concrete job through the
+Actions API. The run must have the exact head SHA, workflow path and event; for
+pull-request events, both the run and check must be associated with the exact
+base/head pair being evaluated.
 
-For one check policy, only evidence at the highest matching attempt is eligible.
-Exactly one candidate must exist at that attempt. This prevents an older green
-attempt from hiding a later failure and rejects ambiguous provenance.
+Different workflow runs are ordered by their GitHub `created_at` timestamp.
+Inside the latest matching run, only the concrete job at the highest matching
+`run_attempt` is eligible. Attempt numbers from separate workflow runs are never
+compared. Exactly one candidate must exist at that run/attempt. This prevents
+an older green rerun from hiding a later failure and rejects ambiguous
+provenance.
 
 The eligible check must be completed, have an allowed conclusion, and have a
 valid `completed_at` no older than its configured maximum. Future timestamps
@@ -166,5 +174,7 @@ Deploy one of:
 ## Compatibility
 
 Schema identifiers are versioned. Adding optional receipt fields is compatible;
-changing verdict rules, check identity, required manifest fields, or accepted
-conclusions requires a new schema version and changelog entry.
+changing manifest fields or receipt interpretation requires a new schema
+version. During the v0.x alpha, security corrections may tighten provenance
+validation for existing manifests; those changes require a changelog entry and
+an immutable patch release.

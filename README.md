@@ -75,14 +75,14 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: korovin-aa97/ci-evidence-gate@f4e1343d7122252d8617191d964b9d5db3be0b4f # v0.1.1
+      - uses: korovin-aa97/ci-evidence-gate@594938ec2ebc264c34e86a5e572375a0ac53b0ee # v0.1.3
         id: evidence
         with:
           base-sha: ${{ github.event.pull_request.base.sha }}
           head-sha: ${{ github.event.pull_request.head.sha }}
 ```
 
-The full commit above is the reviewed v0.1.1 Action implementation. Never use
+The full commit above is the reviewed v0.1.3 Action implementation. Never use
 `@main`; resolve each release tag and pin its full commit SHA. See
 [immutable pinning](docs/PINNING.md).
 
@@ -129,12 +129,16 @@ closed. Full format: [Manifest v1](docs/MANIFEST.md).
 - every changed path belongs to at least one declared surface;
 - protected policy/verifier paths were not changed by the candidate;
 - check runs come from GitHub's Checks API for the exact head SHA;
-- the exact check name, GitHub App slug, workflow path, event, latest run
-  attempt, conclusion, and freshness match policy;
+- for pull-request evidence, the workflow run is associated with the exact base
+  and head SHA from the trusted event;
+- the exact check name, GitHub App slug, workflow path, event, concrete Actions
+  job, latest job attempt, conclusion, and freshness match policy;
 - a receipt binds all facts to the base/head SHA and base-policy SHA-256.
 
 Skipped or neutral jobs are not success unless `neutral` is explicitly allowed.
-If a later rerun fails, an earlier successful attempt is not accepted.
+If a later rerun fails or is still running, an earlier successful attempt is
+not accepted. Workflow reruns are correlated through each concrete Actions job,
+not inferred from the parent run's current attempt number.
 
 ## Outputs
 
@@ -165,6 +169,11 @@ runs. Use a required workflow/ruleset where available, or require independent
 review of the gate workflow and manifest. `CODEOWNERS` helps route review but is
 not by itself an execution boundary. Never combine `pull_request_target`, a
 write token or secrets, and checkout/execution of untrusted PR code.
+
+In GitHub Actions, repository, API URL, and base/head SHA inputs are checked
+against GitHub-owned event context before the token is used. The manifest path
+and gate invocation still belong to the deployment boundary, so keep them in a
+trusted required workflow or under independent review.
 
 Read [RFC](docs/RFC.md), [Threat model](docs/THREAT_MODEL.md), and
 [Deployment](docs/DEPLOYMENT.md) before treating the verdict as a merge gate.

@@ -10,7 +10,8 @@ Key groups:
 - `policy`: base source ref, manifest path and SHA-256;
 - `changed_files`: Git status, current path and optional previous path;
 - `matched_surfaces`: changed paths and checks activated by each surface;
-- `check_evidence`: selected check/workflow facts and latest attempt;
+- `check_evidence`: selected check/workflow facts and concrete latest job
+  attempt;
 - `findings`: stable code plus human message and optional check/path;
 - `verdict`: `sufficient`, `insufficient`, or `invalid`.
 
@@ -26,3 +27,7 @@ receipt from sufficient to insufficient.
 Receipts are not signatures or attestations. Store their digest in a trusted
 channel, or sign/upload them with a separate mechanism whose credentials are
 not available to untrusted PR code.
+
+The destination is replaced atomically, so an existing symlink at the receipt
+filename is not followed. Keep the parent directory in the trusted workspace;
+the Action does not upload or persist the receipt by itself.

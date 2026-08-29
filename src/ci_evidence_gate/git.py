@@ -9,6 +9,7 @@ import shutil
 # Git is invoked without a shell and only with validated refs/paths.
 import subprocess  # nosec B404
 from pathlib import Path
+from typing import cast
 
 from .errors import InvalidEvaluation
 from .models import ChangedFile
@@ -44,7 +45,7 @@ def _git(workspace: Path, *arguments: str, text: bool = True) -> str | bytes:
                 else exc.stderr.decode("utf-8", "replace")
             )
         raise InvalidEvaluation(f"git command failed: {detail.strip() or exc}") from exc
-    return result.stdout
+    return cast(str | bytes, result.stdout)
 
 
 def validate_commit(workspace: Path, sha: str, label: str) -> str:

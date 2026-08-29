@@ -15,6 +15,10 @@ No pull-request, status, issue, artifact, secret, OIDC, package, or write
 permission is required. Set `permissions: {}` at workflow level and add only
 these permissions on the gate job.
 
+The Action verifies its repository, API URL and base/head inputs against
+GitHub-owned event context before using the token. Do not pass a PAT or other
+secret to work around a permission failure; correct the job permissions instead.
+
 ## Ordering
 
 Declare evidence-producing jobs in `needs` and run the gate with `if: always()`.
@@ -50,6 +54,11 @@ its decision, but the outer required check still needs a trusted source/ruleset.
 The recommended `pull_request` workflow works with read-only fork tokens and no
 secrets. Public forks may need a maintainer to approve their first workflow run;
 that is a GitHub repository policy, not a gate failure.
+
+GitHub may withhold a workflow run entirely until approval. In that state the
+gate cannot emit a verdict because no job has started. Once approved, the
+documented `actions: read`, `checks: read`, and `contents: read` scopes are
+sufficient; no fork secret is required.
 
 Do not switch to `pull_request_target` merely to bypass fork approval. Never
 checkout or execute untrusted PR code in a privileged target-context workflow.

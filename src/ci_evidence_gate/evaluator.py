@@ -10,20 +10,26 @@ from typing import Any
 
 from .errors import InvalidEvaluation
 from .git import changed_files, read_file_at, validate_commit, validate_manifest_path
-from .github import EvidenceProvider, workflow_run_id
+from .github import (
+    EvidenceProvider,
+    check_run_id,
+    workflow_job_reference,
+)
 from .manifest import parse_manifest
 from .models import CheckPolicy, CheckResult, Finding
 from .patterns import matches
 
 RECEIPT_SCHEMA = "ci-evidence-receipt/v1"
-TOOL_VERSION = "0.1.1"
+TOOL_VERSION = "0.1.3"
+MAX_SAME_NAME_CANDIDATES = 100
+PULL_REQUEST_EVENTS = {"pull_request", "pull_request_target"}
 
 
 def _parse_time(value: object, context: str) -> dt.datetime:
     if not isinstance(value, str):
         raise InvalidEvaluation(f"{context} has no timestamp")
     try:
-        parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = dt.datetime.fromisoformat(value)
     except ValueError as exc:
         raise InvalidEvaluation(f"{context} has an invalid timestamp") from exc
     if parsed.tzinfo is None:
@@ -39,9 +45,11 @@ def _candidate_result(
     policy: CheckPolicy,
     item: dict[str, Any],
     run: dict[str, Any],
+    job: dict[str, Any],
     state: str,
 ) -> CheckResult:
-    app = item.get("app") if isinstance(item.get("app"), dict) else {}
+    raw_app = item.get("app")
+    app = raw_app if isinstance(raw_app, dict) else {}
     return CheckResult(
         check_id=policy.id,
         expected_name=policy.name,
@@ -58,12 +66,29 @@ def _candidate_result(
         app_id=_optional_int(app.get("id")),
         workflow_path=run.get("path") if isinstance(run.get("path"), str) else None,
         workflow_run_id=_optional_int(run.get("id")),
-        run_attempt=_optional_int(run.get("run_attempt")),
+        run_attempt=_optional_int(job.get("run_attempt")),
         event=run.get("event") if isinstance(run.get("event"), str) else None,
         details_url=item.get("details_url")
         if isinstance(item.get("details_url"), str)
         else None,
     )
+
+
+def _pull_request_matches(
+    value: object, base_sha: str, head_sha: str, context: str
+) -> bool:
+    if not isinstance(value, list):
+        raise InvalidEvaluation(f"{context} pull_requests is malformed")
+    for pull_request in value:
+        if not isinstance(pull_request, dict):
+            raise InvalidEvaluation(f"{context} pull_requests is malformed")
+        base = pull_request.get("base")
+        head = pull_request.get("head")
+        if not isinstance(base, dict) or not isinstance(head, dict):
+            raise InvalidEvaluation(f"{context} pull_requests is malformed")
+        if base.get("sha") == base_sha and head.get("sha") == head_sha:
+            return True
+    return False
 
 
 def _missing_result(policy: CheckPolicy) -> CheckResult:
@@ -89,43 +114,96 @@ def verify_check(
     policy: CheckPolicy,
     runs: list[dict[str, Any]],
     provider: EvidenceProvider,
+    base_sha: str,
     head_sha: str,
     now: dt.datetime,
     default_max_age: int,
 ) -> tuple[CheckResult, tuple[Finding, ...], bool]:
     same_name = [item for item in runs if item.get("name") == policy.name]
-    identity_matches: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    if len(same_name) > MAX_SAME_NAME_CANDIDATES:
+        raise InvalidEvaluation(
+            f"check {policy.id!r} has more than {MAX_SAME_NAME_CANDIDATES} same-name candidates"
+        )
+    identity_matches: list[
+        tuple[dict[str, Any], dict[str, Any], dict[str, Any], dt.datetime]
+    ] = []
     workflow_cache: dict[int, dict[str, Any]] = {}
+    job_cache: dict[int, dict[str, Any]] = {}
     for item in same_name:
-        app = item.get("app") if isinstance(item.get("app"), dict) else {}
+        raw_app = item.get("app")
+        app = raw_app if isinstance(raw_app, dict) else {}
         if item.get("head_sha") != head_sha or app.get("slug") != policy.app_slug:
             continue
-        run_id = workflow_run_id(item.get("details_url"))
-        if run_id is None:
-            continue
+        reference = workflow_job_reference(item.get("details_url"))
+        if reference is None:
+            raise InvalidEvaluation(
+                f"check {policy.id!r} has a malformed GitHub Actions details_url"
+            )
+        run_id, job_id = reference
+        item_id = _optional_int(item.get("id"))
+        if item_id is None or item_id < 1:
+            raise InvalidEvaluation(f"check {policy.id!r} has an invalid check-run id")
         if run_id not in workflow_cache:
             workflow_cache[run_id] = provider.workflow_run(run_id)
         run = workflow_cache[run_id]
-        if (
-            run.get("id") != run_id
-            or run.get("head_sha") != head_sha
-            or run.get("path") != policy.workflow
-            or run.get("event") not in policy.events
-        ):
+        if run.get("id") != run_id or run.get("head_sha") != head_sha:
+            raise InvalidEvaluation(
+                f"workflow run {run_id} returned contradictory identity facts"
+            )
+        if run.get("path") != policy.workflow or run.get("event") not in policy.events:
             continue
-        attempt = run.get("run_attempt")
-        if not isinstance(attempt, int) or isinstance(attempt, bool) or attempt < 1:
+        run_attempt = run.get("run_attempt")
+        if (
+            not isinstance(run_attempt, int)
+            or isinstance(run_attempt, bool)
+            or run_attempt < 1
+        ):
             raise InvalidEvaluation(f"workflow run {run_id} has an invalid run_attempt")
-        identity_matches.append((item, run))
+        created_at = _parse_time(run.get("created_at"), f"workflow run {run_id}")
+        if created_at > now + dt.timedelta(minutes=5):
+            raise InvalidEvaluation(f"workflow run {run_id} was created in the future")
+        if run.get("event") in PULL_REQUEST_EVENTS:
+            if not _pull_request_matches(
+                run.get("pull_requests"), base_sha, head_sha, f"workflow run {run_id}"
+            ):
+                continue
+            if not _pull_request_matches(
+                item.get("pull_requests"),
+                base_sha,
+                head_sha,
+                f"check run {item_id}",
+            ):
+                continue
+        if job_id not in job_cache:
+            job_cache[job_id] = provider.workflow_job(job_id)
+        job = job_cache[job_id]
+        job_attempt = job.get("run_attempt")
+        if (
+            job.get("id") != job_id
+            or job.get("run_id") != run_id
+            or job.get("head_sha") != head_sha
+            or job.get("name") != policy.name
+            or check_run_id(job.get("check_run_url")) != item_id
+        ):
+            raise InvalidEvaluation(
+                f"workflow job {job_id} returned contradictory identity facts"
+            )
+        if (
+            not isinstance(job_attempt, int)
+            or isinstance(job_attempt, bool)
+            or job_attempt < 1
+            or job_attempt > run_attempt
+        ):
+            raise InvalidEvaluation(f"workflow job {job_id} has an invalid run_attempt")
+        identity_matches.append((item, run, job, created_at))
 
     if not identity_matches:
-        observed = sorted(
-            {
-                str((item.get("app") or {}).get("slug"))
-                for item in same_name
-                if isinstance(item.get("app"), dict)
-            }
-        )
+        observed_values: set[str] = set()
+        for item in same_name:
+            observed_app = item.get("app")
+            if isinstance(observed_app, dict) and "slug" in observed_app:
+                observed_values.add(str(observed_app["slug"]))
+        observed = sorted(observed_values)
         detail = f"; observed app slugs: {', '.join(observed)}" if observed else ""
         return (
             _missing_result(policy),
@@ -142,18 +220,34 @@ def verify_check(
             False,
         )
 
-    highest_attempt = max(int(run["run_attempt"]) for _, run in identity_matches)
+    latest_created = max(created for _, _, _, created in identity_matches)
+    latest_run_ids = {
+        int(run["id"])
+        for _, run, _, created in identity_matches
+        if created == latest_created
+    }
+    if len(latest_run_ids) != 1:
+        raise InvalidEvaluation(
+            f"check {policy.id!r} is ambiguous across {len(latest_run_ids)} latest workflow runs"
+        )
+    latest_run_id = next(iter(latest_run_ids))
+    latest_run_matches = [
+        (item, run, job)
+        for item, run, job, _ in identity_matches
+        if run["id"] == latest_run_id
+    ]
+    highest_attempt = max(int(job["run_attempt"]) for _, _, job in latest_run_matches)
     latest = [
-        (item, run)
-        for item, run in identity_matches
-        if run["run_attempt"] == highest_attempt
+        (item, run, job)
+        for item, run, job in latest_run_matches
+        if job["run_attempt"] == highest_attempt
     ]
     if len(latest) != 1:
         raise InvalidEvaluation(
-            f"check {policy.id!r} is ambiguous: {len(latest)} matching runs at attempt {highest_attempt}"
+            f"check {policy.id!r} is ambiguous: {len(latest)} matching jobs at attempt {highest_attempt}"
         )
-    item, run = latest[0]
-    result = _candidate_result(policy, item, run, "observed")
+    item, run, job = latest[0]
+    result = _candidate_result(policy, item, run, job, "observed")
     findings: list[Finding] = []
     if item.get("status") != "completed":
         findings.append(
@@ -163,6 +257,7 @@ def verify_check(
                 check_id=policy.id,
             )
         )
+        return result, tuple(findings), False
     if item.get("conclusion") not in policy.allowed_conclusions:
         findings.append(
             Finding(
@@ -174,8 +269,6 @@ def verify_check(
                 check_id=policy.id,
             )
         )
-    if item.get("status") != "completed":
-        return result, tuple(findings), False
     completed = _parse_time(item.get("completed_at"), f"check {policy.id}")
     if completed > now + dt.timedelta(minutes=5):
         raise InvalidEvaluation(f"check {policy.id!r} completed in the future")
@@ -257,22 +350,24 @@ def evaluate(
             )
         )
 
-    check_runs = provider.check_runs(head_sha)
     check_policies = {item.id: item for item in manifest.checks}
     check_results: list[CheckResult] = []
     all_checks_passed = True
-    for check_id in sorted(required_ids):
-        result, check_findings, passed = verify_check(
-            check_policies[check_id],
-            check_runs,
-            provider,
-            head_sha,
-            evaluation_time,
-            manifest.max_evidence_age_hours,
-        )
-        check_results.append(result)
-        findings.extend(check_findings)
-        all_checks_passed = all_checks_passed and passed
+    if not invalid:
+        check_runs = provider.check_runs(head_sha)
+        for check_id in sorted(required_ids):
+            result, check_findings, passed = verify_check(
+                check_policies[check_id],
+                check_runs,
+                provider,
+                base_sha,
+                head_sha,
+                evaluation_time,
+                manifest.max_evidence_age_hours,
+            )
+            check_results.append(result)
+            findings.extend(check_findings)
+            all_checks_passed = all_checks_passed and passed
 
     if invalid:
         verdict = "invalid"

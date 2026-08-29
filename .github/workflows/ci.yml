@@ -42,9 +42,27 @@ jobs:
       - name: Validate release invariants
         run: python3 scripts/validate_release.py
 
+  quality:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.0"
+      - name: Ruff lint and format
+        run: |
+          uvx --from ruff==0.16.5 ruff check .
+          uvx --from ruff==0.16.5 ruff format --check .
+      - name: Strict type check
+        run: uvx --from mypy==2.3.1 mypy --strict src
+      - name: Security scan
+        run: uvx --from bandit==1.9.4 bandit -q -r src scripts -x tests
+
   evidence:
     if: ${{ github.event_name == 'pull_request' && always() }}
-    needs: [test, lint]
+    needs: [test, lint, quality]
     runs-on: ubuntu-latest
     permissions:
       actions: read

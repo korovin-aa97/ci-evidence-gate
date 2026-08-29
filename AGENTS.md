@@ -1,6 +1,6 @@
 # CI Evidence Gate — Agent Bootstrap
 
-Last updated: 2026-08-29. Repository status: **public v0.1.1**.
+Last updated: 2026-08-30. Repository status: **public v0.1.3**.
 
 Read this file first, followed by `README.md`, `action.yml`, the example
 manifest, the source, and `docs/PUBLIC_RELEASE_PLAN.md`.
@@ -21,9 +21,11 @@ guarantee that the tests themselves are logically sufficient.
 
 ## Current state
 
-- Version `0.1.1`; Apache-2.0 GitHub Action released publicly.
+- Version `0.1.3`; Apache-2.0 GitHub Action released publicly and listed in
+  GitHub Marketplace.
 - Exact-SHA evidence comes from read-only GitHub Checks and Actions APIs and is
-  validated for app/workflow/event/attempt/conclusion/freshness identity.
+  validated for app/workflow/event/job-attempt/PR-base/conclusion/freshness
+  identity.
 - Policy is loaded from the base commit; manifests and protected verifier paths
   cannot approve their own modification.
 - RFC, threat model, versioned schemas, fixture tests, local demo, sample
