@@ -4,10 +4,10 @@ Tags and branches are readable but movable Git references. Production consumers
 should pin the Action to the full 40-character commit printed in each release:
 
 ```yaml
-- uses: korovin-aa97/ci-evidence-gate@RELEASE_COMMIT_SHA # v0.1.3
+- uses: korovin-aa97/ci-evidence-gate@594938ec2ebc264c34e86a5e572375a0ac53b0ee # v0.1.3
 ```
 
-Replace the placeholder with the release's full commit. To resolve independently:
+To resolve independently:
 
 ```bash
 git ls-remote https://github.com/korovin-aa97/ci-evidence-gate.git refs/tags/v0.1.3 refs/tags/v0.1.3^{}

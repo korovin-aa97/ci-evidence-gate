@@ -75,15 +75,15 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: korovin-aa97/ci-evidence-gate@RELEASE_COMMIT_SHA # v0.1.3
+      - uses: korovin-aa97/ci-evidence-gate@594938ec2ebc264c34e86a5e572375a0ac53b0ee # v0.1.3
         id: evidence
         with:
           base-sha: ${{ github.event.pull_request.base.sha }}
           head-sha: ${{ github.event.pull_request.head.sha }}
 ```
 
-Replace `RELEASE_COMMIT_SHA` with the full commit printed in the v0.1.3 release.
-Never use `@main`; resolve each release tag and pin its full commit SHA. See
+The full commit above is the reviewed v0.1.3 Action implementation. Never use
+`@main`; resolve each release tag and pin its full commit SHA. See
 [immutable pinning](docs/PINNING.md).
 
 The Action needs only `contents: read`, `checks: read`, and `actions: read`. It
