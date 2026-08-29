@@ -1,0 +1,21 @@
+[policy]
+protected = [
+  ".github/ci-evidence.toml",
+  ".github/workflows/ci.yml",
+  "scripts/ci-evidence-gate.py",
+]
+
+[[surfaces]]
+name = "python"
+patterns = ["src/**/*.py", "tests/**/*.py", "pyproject.toml"]
+checks = ["test", "lint"]
+
+[[surfaces]]
+name = "web"
+patterns = ["web/**", "package.json", "package-lock.json"]
+checks = ["web-build", "web-e2e"]
+
+[[surfaces]]
+name = "documentation"
+patterns = ["**/*.md"]
+checks = ["docs"]

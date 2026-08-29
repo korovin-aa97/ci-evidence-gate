@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ci-evidence-gate"
+version = "0.0.1"
+description = "Draft exact-SHA and changed-surface evidence gate for CI"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+ci-evidence-gate = "ci_evidence_gate.cli:main"

@@ -1,0 +1,27 @@
+name: CI Evidence Gate
+description: Draft exact-SHA and changed-surface evidence gate
+inputs:
+  base-sha:
+    description: Pull request base SHA
+    required: true
+  head-sha:
+    description: Pull request head SHA
+    required: true
+  manifest:
+    description: Coverage manifest path
+    required: false
+    default: .github/ci-evidence.toml
+outputs:
+  verdict:
+    description: sufficient, insufficient, or invalid
+    value: ${{ steps.gate.outputs.verdict }}
+runs:
+  using: composite
+  steps:
+    - id: gate
+      shell: bash
+      env:
+        EVIDENCE_BASE_SHA: ${{ inputs.base-sha }}
+        EVIDENCE_HEAD_SHA: ${{ inputs.head-sha }}
+        EVIDENCE_MANIFEST: ${{ inputs.manifest }}
+      run: python3 "$GITHUB_ACTION_PATH/src/ci_evidence_gate/cli.py" evaluate
