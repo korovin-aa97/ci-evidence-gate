@@ -26,4 +26,9 @@ This initial commit is an untested prototype. It does not query GitHub check
 runs yet; callers provide the names of successful checks through
 `CI_EVIDENCE_PASSED_CHECKS` as a comma-separated list.
 
+## Agent handoff
+
+Start a future implementation or publication session with [AGENTS.md](AGENTS.md),
+then follow [the public release plan](docs/PUBLIC_RELEASE_PLAN.md).
+
 No public license has been selected while this repository is private.
