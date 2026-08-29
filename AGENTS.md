@@ -1,6 +1,6 @@
 # CI Evidence Gate — Agent Bootstrap
 
-Last updated: 2026-08-29. Repository status: **private RFC prototype**.
+Last updated: 2026-08-29. Repository status: **v0.1.0 release candidate**.
 
 Read this file first, followed by `README.md`, `action.yml`, the example
 manifest, the source, and `docs/PUBLIC_RELEASE_PLAN.md`.
@@ -21,13 +21,14 @@ guarantee that the tests themselves are logically sufficient.
 
 ## Current state
 
-- Version `0.0.1`; private and unpublished.
-- Contains a composite Action, a TOML coverage manifest, exact-SHA diff logic,
-  protected-path checks, and a draft receipt.
-- Successful check names currently arrive through an environment variable; the
-  prototype does not query GitHub check runs or validate their conclusions.
-- There are no tests, RFC, threat model, public license, release workflow, or
-  Marketplace packaging.
+- Version `0.1.0`; Apache-2.0 GitHub Action prepared for public release.
+- Exact-SHA evidence comes from read-only GitHub Checks and Actions APIs and is
+  validated for app/workflow/event/attempt/conclusion/freshness identity.
+- Policy is loaded from the base commit; manifests and protected verifier paths
+  cannot approve their own modification.
+- RFC, threat model, versioned schemas, fixture tests, local demo, sample
+  integration, community files, CI, Marketplace metadata, and pinning guidance
+  are present.
 
 ## Non-negotiable boundaries
 
@@ -46,16 +47,12 @@ guarantee that the tests themselves are logically sufficient.
 
 ## Next work, in order
 
-1. Write the RFC and threat model before broadening implementation.
-2. Define the versioned manifest and receipt schemas and exact verdict rules.
-3. Query GitHub check suites/runs for the exact SHA and validate conclusion,
-   workflow identity, attempt, freshness, and required-check mapping.
-4. Design independent-policy protection using branch protection, CODEOWNERS,
-   reusable workflows, or a trusted external repository.
-5. Add fixture repositories for stale evidence, skipped jobs, self-modified
-   policy, renamed checks, partial coverage, forks, and reruns.
-6. Package a pinned GitHub Action and publish the RFC for external review.
-7. Complete `docs/PUBLIC_RELEASE_PLAN.md`; publish only with explicit approval.
+1. Collect real adopter feedback on check naming, matrix jobs, and deployment.
+2. Add signed/attested receipts only if users need a boundary beyond runner
+   trust; do not imply the v1 digest is a signature.
+3. Consider GitHub App and non-Actions producers only through a new schema
+   version with equivalent identity guarantees.
+4. Revalidate API and ruleset semantics before every minor release.
 
 ## v0.1 definition of done
 

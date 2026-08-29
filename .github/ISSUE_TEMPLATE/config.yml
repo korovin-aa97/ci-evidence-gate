@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/korovin-aa97/ci-evidence-gate/security/advisories/new
+    about: Report a suspected bypass privately

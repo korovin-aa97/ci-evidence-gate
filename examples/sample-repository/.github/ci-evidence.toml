@@ -8,7 +8,7 @@ protected = [
 ]
 
 [[checks]]
-id = "python-test"
+id = "test"
 name = "test"
 workflow = ".github/workflows/ci.yml"
 app_slug = "github-actions"
@@ -16,7 +16,7 @@ allowed_conclusions = ["success"]
 events = ["pull_request"]
 
 [[checks]]
-id = "python-lint"
+id = "lint"
 name = "lint"
 workflow = ".github/workflows/ci.yml"
 app_slug = "github-actions"
@@ -24,11 +24,11 @@ allowed_conclusions = ["success"]
 events = ["pull_request"]
 
 [[surfaces]]
-name = "python"
+name = "application"
 patterns = ["src/**/*.py", "tests/**/*.py", "pyproject.toml"]
-checks = ["python-test", "python-lint"]
+checks = ["test", "lint"]
 
 [[surfaces]]
 name = "documentation"
 patterns = ["**/*.md"]
-checks = ["python-lint"]
+checks = ["lint"]

@@ -1,0 +1,19 @@
+name: Feature request
+description: Propose a bounded evidence-contract improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Evidence gap
+      description: What false-sufficient or false-insufficient case should change?
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Trust and compatibility impact
+      description: Which actor gains trust, and does this require a schema change?
+    validations:
+      required: true

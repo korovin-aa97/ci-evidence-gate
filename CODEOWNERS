@@ -1,0 +1,7 @@
+# Review security-sensitive policy and executable surfaces explicitly.
+/.github/ @korovin-aa97
+/action.yml @korovin-aa97
+/src/ @korovin-aa97
+/schemas/ @korovin-aa97
+/docs/RFC.md @korovin-aa97
+/docs/THREAT_MODEL.md @korovin-aa97

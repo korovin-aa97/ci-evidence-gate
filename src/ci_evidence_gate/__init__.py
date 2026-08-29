@@ -1,3 +1,3 @@
-"""CI Evidence Gate draft."""
+"""Exact-SHA, changed-surface CI evidence for pull requests."""
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"

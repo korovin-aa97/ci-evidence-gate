@@ -1,0 +1,29 @@
+name: Bug report
+description: Report a reproducible non-security defect
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: For security bypasses, use private vulnerability reporting instead.
+  - type: input
+    id: version
+    attributes:
+      label: Pinned Action commit
+      placeholder: 40-character SHA
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Remove tokens, private names, and private URLs.
+    validations:
+      required: true
+  - type: dropdown
+    id: verdict
+    attributes:
+      label: Actual verdict
+      options: [sufficient, insufficient, invalid, no receipt]
+    validations:
+      required: true

@@ -1,34 +1,188 @@
 # CI Evidence Gate
 
-Private RFC-first draft for deciding whether green CI is actually evidence for
-a proposed change.
+[![CI](https://github.com/korovin-aa97/ci-evidence-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/korovin-aa97/ci-evidence-gate/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-The gate does not replace tests. It checks the proof around them:
+**Exact-SHA, changed-surface CI evidence for pull requests.**
 
-- the evidence belongs to the exact head commit;
-- every changed file maps to at least one declared check;
-- the proposal did not modify the policy or verifier that judges it;
-- a machine-readable receipt records the decision.
+A green job name alone does not say which commit produced it, which workflow
+produced it, or whether the changed files were meant to be tested. CI Evidence
+Gate joins those facts under policy from the pull request's **base commit** and
+emits a reviewable JSON receipt.
 
-Possible verdicts are `sufficient`, `insufficient`, and `invalid`.
+It answers a narrow question:
 
-## Draft GitHub Action
+> Did the declared checks, from the declared GitHub Actions workflows, pass for
+> this exact head SHA and cover every changed path under independently held
+> policy?
 
-```yaml
-- uses: korovin-aa97/ci-evidence-gate@main
-  with:
-    base-sha: ${{ github.event.pull_request.base.sha }}
-    head-sha: ${{ github.event.pull_request.head.sha }}
-    manifest: .github/ci-evidence.toml
+It does **not** prove that tests are correct, that a program is correct, or that
+branch protection is configured correctly.
+
+## Three fail-closed verdicts
+
+| Verdict | Meaning | Exit |
+| --- | --- | ---: |
+| `sufficient` | Every changed path maps to declared evidence, and the latest matching attempt is successful and fresh. | 0 |
+| `insufficient` | The evaluation is trustworthy, but coverage or required evidence is missing, stale, skipped, incomplete, or unsuccessful. | 1 |
+| `invalid` | The judge/policy changed, inputs are malformed, provenance is ambiguous, or evidence cannot be retrieved safely. | 2 |
+
+```text
+changed paths ──> base-commit manifest ──> required check identities
+       │                                        │
+       └──────── exact head SHA ──> GitHub Checks + Actions APIs
+                                                │
+                              sufficient / insufficient / invalid
+                                                │
+                                      versioned JSON receipt
 ```
 
-This initial commit is an untested prototype. It does not query GitHub check
-runs yet; callers provide the names of successful checks through
-`CI_EVIDENCE_PASSED_CHECKS` as a comma-separated list.
+## Quickstart
 
-## Agent handoff
+1. Add [the sample manifest](examples/sample-repository/.github/ci-evidence.toml)
+   as `.github/ci-evidence.toml`.
+2. Add the gate after the jobs it judges. Checkout history is required because
+   policy and changed paths are read from Git objects.
+3. Make the gate job a required status check in a branch ruleset. Protect the
+   manifest and gate workflow as described in [Deployment](docs/DEPLOYMENT.md).
 
-Start a future implementation or publication session with [AGENTS.md](AGENTS.md),
-then follow [the public release plan](docs/PUBLIC_RELEASE_PLAN.md).
+```yaml
+name: CI
+on:
+  pull_request:
 
-No public license has been selected while this repository is private.
+permissions: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - run: python -m unittest discover -v
+
+  evidence:
+    if: ${{ always() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: read
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: korovin-aa97/ci-evidence-gate@RELEASE_COMMIT_SHA
+        id: evidence
+        with:
+          base-sha: ${{ github.event.pull_request.base.sha }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
+```
+
+`RELEASE_COMMIT_SHA` is replaced with the reviewed v0.1.0 commit in the release
+copy of this file. Never use `@main`; resolve a release tag and pin the full
+commit SHA. See [immutable pinning](docs/PINNING.md).
+
+The Action needs only `contents: read`, `checks: read`, and `actions: read`. It
+does not write checks, comments, pull requests, repository contents, or
+artifacts. The receipt stays in the runner workspace unless you explicitly
+upload it.
+
+## Manifest
+
+```toml
+schema = "ci-evidence-manifest/v1"
+
+[policy]
+max_evidence_age_hours = 24
+protected = [
+  ".github/workflows/ci.yml",
+  "tests/**",
+]
+
+[[checks]]
+id = "test"
+name = "test"
+workflow = ".github/workflows/ci.yml"
+app_slug = "github-actions"
+allowed_conclusions = ["success"]
+events = ["pull_request"]
+
+[[surfaces]]
+name = "python"
+patterns = ["src/**/*.py", "tests/**/*.py", "pyproject.toml"]
+checks = ["test"]
+```
+
+The manifest is always loaded from `base-sha`, not from the candidate checkout.
+The manifest path protects itself automatically. Unknown keys, unknown check
+IDs, unsafe paths, uncovered changes, and unauthenticated provenance fail
+closed. Full format: [Manifest v1](docs/MANIFEST.md).
+
+## What the Action verifies
+
+- `base-sha` and `head-sha` are full commit IDs present in the checkout.
+- changed paths include adds, edits, deletions, copies, and both sides of renames;
+- every changed path belongs to at least one declared surface;
+- protected policy/verifier paths were not changed by the candidate;
+- check runs come from GitHub's Checks API for the exact head SHA;
+- the exact check name, GitHub App slug, workflow path, event, latest run
+  attempt, conclusion, and freshness match policy;
+- a receipt binds all facts to the base/head SHA and base-policy SHA-256.
+
+Skipped or neutral jobs are not success unless `neutral` is explicitly allowed.
+If a later rerun fails, an earlier successful attempt is not accepted.
+
+## Outputs
+
+- `verdict` — `sufficient`, `insufficient`, or `invalid`
+- `receipt` — path to `ci-evidence-receipt.json`
+- `receipt-sha256` — digest of the serialized receipt
+
+The Action also writes a GitHub job summary and workflow annotations. Receipt
+schema: [JSON Schema](schemas/receipt-v1.schema.json) and
+[receipt reference](docs/RECEIPT.md).
+
+## Try it locally
+
+No token or network is used by the demo:
+
+```bash
+PYTHONPATH=src python3 scripts/run_demo.py
+```
+
+It builds disposable Git fixture repositories and demonstrates `sufficient`,
+`insufficient`, and `invalid`. Offline fixtures are deliberately not accepted
+as an Action input; production evaluation always queries GitHub directly.
+
+## Trust model and limitations
+
+The Action cannot protect a workflow that a pull request can disable before it
+runs. Use a required workflow/ruleset where available, or require independent
+review of the gate workflow and manifest. `CODEOWNERS` helps route review but is
+not by itself an execution boundary. Never combine `pull_request_target`, a
+write token or secrets, and checkout/execution of untrusted PR code.
+
+Read [RFC](docs/RFC.md), [Threat model](docs/THREAT_MODEL.md), and
+[Deployment](docs/DEPLOYMENT.md) before treating the verdict as a merge gate.
+
+## Related work
+
+GitHub rulesets, required status checks, path filters, workflow hardening, and
+artifact attestations solve important adjacent problems. They do not currently
+combine base-held changed-surface mapping with exact job workflow provenance and
+a receipt in one small Action. The dated comparison and links to primary
+sources are in [Related work](docs/RELATED_WORK.md).
+
+## Project
+
+- Apache-2.0 licensed; no telemetry and no hosted service.
+- Security reports: [SECURITY.md](SECURITY.md).
+- Contributions: [CONTRIBUTING.md](CONTRIBUTING.md).
+- Changes: [CHANGELOG.md](CHANGELOG.md).
+
+Built from operating a mixed Claude/Codex production fleet. The implementation
+and examples are generic; no private fleet code or topology is included.

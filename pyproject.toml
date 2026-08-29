@@ -1,13 +1,30 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "ci-evidence-gate"
-version = "0.0.1"
-description = "Draft exact-SHA and changed-surface evidence gate for CI"
-requires-python = ">=3.12"
+version = "0.1.0"
+description = "Exact-SHA, changed-surface CI evidence for GitHub pull requests"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [{name = "Alexander Korovin"}]
+keywords = ["github-actions", "ci", "policy-as-code", "supply-chain"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/korovin-aa97/ci-evidence-gate"
+Issues = "https://github.com/korovin-aa97/ci-evidence-gate/issues"
 
 [project.scripts]
 ci-evidence-gate = "ci_evidence_gate.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ci_evidence_gate"]

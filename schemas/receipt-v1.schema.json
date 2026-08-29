@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/korovin-aa97/ci-evidence-gate/v0.1.0/schemas/receipt-v1.schema.json",
+  "title": "CI Evidence Gate receipt v1",
+  "type": "object",
+  "required": ["schema", "tool", "repository", "subject", "findings", "verdict"],
+  "properties": {
+    "schema": {"const": "ci-evidence-receipt/v1"},
+    "tool": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "ci-evidence-gate"},
+        "version": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "repository": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "subject": {
+      "type": "object",
+      "required": ["base_sha", "head_sha"],
+      "properties": {
+        "base_sha": {"type": "string"},
+        "head_sha": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "policy": {"type": "object"},
+    "changed_files": {"type": "array", "items": {"type": "object"}},
+    "matched_surfaces": {"type": "array", "items": {"type": "object"}},
+    "required_checks": {"type": "array", "items": {"type": "string"}},
+    "check_evidence": {"type": "array", "items": {"type": "object"}},
+    "uncovered_files": {"type": "array", "items": {"type": "string"}},
+    "protected_changes": {"type": "array", "items": {"type": "string"}},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string"},
+          "message": {"type": "string"},
+          "check_id": {"type": ["string", "null"]},
+          "path": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "verdict": {"enum": ["sufficient", "insufficient", "invalid"]}
+  },
+  "additionalProperties": true
+}

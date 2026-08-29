@@ -1,27 +1,69 @@
 name: CI Evidence Gate
-description: Draft exact-SHA and changed-surface evidence gate
+description: Verify that exact-SHA GitHub checks cover every changed surface under base-branch policy
+author: korovin-aa97
+branding:
+  icon: shield
+  color: blue
 inputs:
   base-sha:
-    description: Pull request base SHA
+    description: Full pull request base commit SHA
     required: true
   head-sha:
-    description: Pull request head SHA
+    description: Full pull request head commit SHA
     required: true
+  repository:
+    description: GitHub repository in OWNER/NAME form
+    required: false
+    default: ${{ github.repository }}
+  token:
+    description: Read-only token with actions:read and checks:read
+    required: false
+    default: ${{ github.token }}
   manifest:
-    description: Coverage manifest path
+    description: Repository-relative manifest path (loaded from base-sha)
     required: false
     default: .github/ci-evidence.toml
+  receipt:
+    description: Path for the JSON evidence receipt
+    required: false
+    default: ci-evidence-receipt.json
+  api-url:
+    description: GitHub REST API origin
+    required: false
+    default: ${{ github.api_url }}
+  api-version:
+    description: GitHub REST API version header
+    required: false
+    default: "2022-11-28"
 outputs:
   verdict:
     description: sufficient, insufficient, or invalid
     value: ${{ steps.gate.outputs.verdict }}
+  receipt:
+    description: Path to the machine-readable JSON receipt
+    value: ${{ steps.gate.outputs.receipt }}
+  receipt-sha256:
+    description: SHA-256 of the serialized receipt
+    value: ${{ steps.gate.outputs.receipt-sha256 }}
 runs:
   using: composite
   steps:
+    - name: Set up Python
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      with:
+        python-version: "3.12"
+        cache: ""
     - id: gate
+      name: Evaluate CI evidence
       shell: bash
       env:
         EVIDENCE_BASE_SHA: ${{ inputs.base-sha }}
         EVIDENCE_HEAD_SHA: ${{ inputs.head-sha }}
+        EVIDENCE_REPOSITORY: ${{ inputs.repository }}
+        EVIDENCE_TOKEN: ${{ inputs.token }}
         EVIDENCE_MANIFEST: ${{ inputs.manifest }}
-      run: python3 "$GITHUB_ACTION_PATH/src/ci_evidence_gate/cli.py" evaluate
+        EVIDENCE_RECEIPT: ${{ inputs.receipt }}
+        EVIDENCE_API_URL: ${{ inputs.api-url }}
+        EVIDENCE_API_VERSION: ${{ inputs.api-version }}
+        PYTHONPATH: ${{ github.action_path }}/src
+      run: python3 -m ci_evidence_gate.cli evaluate

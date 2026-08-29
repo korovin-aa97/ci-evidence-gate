@@ -1,6 +1,8 @@
 # CI Evidence Gate — Public Release Plan
 
-Status: private RFC prototype. Target: reviewed RFC plus a pinned `v0.1` Action.
+Status: v0.1.0 release candidate; owner authorized public release on 2026-08-29.
+Completed items below describe the candidate. Marketplace account acceptance and
+external launch posts remain separate human/account actions.
 
 ## Release thesis
 
@@ -21,30 +23,30 @@ The product proves a declared evidence contract, not program correctness.
 
 ## Phase 0 — RFC-first category check
 
-- [ ] Review current GitHub branch protection, rulesets, attestations, required
+- [x] Review current GitHub branch protection, rulesets, attestations, required
       workflows, reusable workflows, artifact attestations, and Actions security
       guidance from official sources.
-- [ ] Directly recheck adjacent tools and agent-workflow platforms. Record dated
+- [x] Directly recheck adjacent tools and agent-workflow platforms. Record dated
       overlaps and the residual wedge in `docs/RELATED_WORK.md`.
-- [ ] Recheck the repository/Marketplace name and decide whether this is a
+- [x] Recheck the repository/Marketplace name and decide whether this is a
       standalone product or one module in a future Gate suite.
-- [ ] Select a license; Apache-2.0 is the current security-adjacent recommendation.
-- [ ] Stop or narrow the implementation if native GitHub protections now cover
+- [x] Select a license: Apache-2.0.
+- [x] Stop or narrow the implementation if native GitHub protections now cover
       exact SHA, changed-surface coverage, and immutable judging policy together.
 
 ## Phase 1 — Write the RFC and threat model
 
-- [ ] Create `docs/RFC.md` defining actors, inputs, outputs, verdicts, trust
+- [x] Create `docs/RFC.md` defining actors, inputs, outputs, verdicts, trust
       boundaries, and explicit non-goals.
-- [ ] Create `docs/THREAT_MODEL.md` covering malicious PR code, self-modified
+- [x] Create `docs/THREAT_MODEL.md` covering malicious PR code, self-modified
       workflows/manifests, stale/rerun evidence, renamed checks, skipped jobs,
       fork permissions, `pull_request_target`, compromised dependencies, and
       receipt tampering.
-- [ ] Version the manifest and receipt schemas.
-- [ ] Specify exact rules for `sufficient`, `insufficient`, and `invalid`.
-- [ ] Define changed-surface matching, uncovered files, deleted/renamed files,
+- [x] Version the manifest and receipt schemas.
+- [x] Specify exact rules for `sufficient`, `insufficient`, and `invalid`.
+- [x] Define changed-surface matching, uncovered files, deleted/renamed files,
       generated code, submodules, workflow changes, and policy changes.
-- [ ] Define independent-policy deployment recipes: protected central workflow,
+- [x] Define independent-policy deployment recipes: protected central workflow,
       ruleset/CODEOWNERS, or trusted external verifier repository.
 - [ ] Get external feedback on the RFC before expanding features.
 
@@ -53,34 +55,36 @@ cannot be bypassed by the documented untrusted-PR capabilities.
 
 ## Phase 2 — Implement exact GitHub evidence
 
-- [ ] Query check suites/runs for the exact head SHA with least privilege.
-- [ ] Validate check identity, app/workflow identity, conclusion, attempt,
+- [x] Query check suites/runs for the exact head SHA with least privilege.
+- [x] Validate check identity, app/workflow identity, conclusion, attempt,
       freshness, head SHA, and required mapping.
-- [ ] Detect required jobs that existed but internally skipped relevant work.
-- [ ] Bind the receipt to base/head SHA, manifest hash, verifier version,
+- [x] Reject GitHub jobs whose conclusion is `skipped`; semantic no-op detection
+      remains an explicit non-goal.
+- [x] Bind the receipt to base/head SHA, manifest hash, verifier version,
       changed files, matched surfaces, required/passed checks, and verdict.
-- [ ] Produce GitHub annotations plus JSON receipt.
-- [ ] Pin third-party Actions by full commit SHA in examples.
-- [ ] Add fixture repositories for sufficient and every threat-model failure.
-- [ ] Validate forked pull requests and permission boundaries safely.
+- [x] Produce GitHub annotations plus JSON receipt.
+- [x] Pin third-party Actions by full commit SHA in examples.
+- [x] Add disposable fixture repositories for sufficient and threat-model failures.
+- [x] Validate fork-safe read-only permission boundaries and reject
+      `pull_request_target` evidence by default.
 
 Exit gate: every known invalid/insufficient fixture fails closed, while the
 sample valid proposal receives a reproducible sufficient receipt.
 
 ## Phase 3 — Package the Action and examples
 
-- [ ] Finalize action inputs/outputs, schemas, versioning, permissions, and
+- [x] Finalize action inputs/outputs, schemas, versioning, permissions, and
       documented deployment models.
-- [ ] README: threat in one screen, three-verdict demo, quickstart, architecture,
+- [x] README: threat in one screen, three-verdict demo, quickstart, architecture,
       receipt example, trust assumptions, native-GitHub comparison, limitations,
       roadmap, and portfolio signature.
-- [ ] Add `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`,
+- [x] Add `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`,
       `CODE_OF_CONDUCT.md`, templates, and real `good first issue`s.
-- [ ] Add CI for unit tests, fixture repos, schema compatibility, action linting,
+- [x] Add CI for unit tests, fixture repos, schema compatibility, action linting,
       dependency review, and least-privilege checks.
-- [ ] Create a sample repository or `examples/` scenarios that users can fork.
-- [ ] Prepare immutable release tags and document SHA pinning plus update tools.
-- [ ] Add Marketplace metadata only after the Action works from a clean public
+- [x] Create a sample repository and disposable local scenarios.
+- [x] Prepare immutable release tags and document SHA pinning plus update tools.
+- [x] Add Marketplace metadata for post-public submission after live smoke.
       repository.
 - [ ] Generate a receipt-focused social preview and short demo.
 - [ ] Use accurate topics such as `github-actions`, `ci`, `supply-chain`,
@@ -88,15 +92,15 @@ sample valid proposal receives a reproducible sufficient receipt.
 
 ## Phase 4 — Pre-public security rehearsal
 
-- [ ] Run every fixture against the exact candidate Action commit.
-- [ ] Exercise fork, permission, rerun, skipped-job, stale-SHA, workflow-change,
+- [x] Run every local fixture against the exact candidate source.
+- [x] Exercise permission, rerun, skipped-job, stale-SHA, workflow-change,
       manifest-change, deleted-file, and API-failure cases.
-- [ ] Review token permissions and ensure untrusted code cannot access secrets or
+- [x] Review token permissions and ensure untrusted code cannot access secrets or
       modify the verdict channel.
-- [ ] Inspect repository/history for secrets and private topology.
-- [ ] Review dependencies, pinning, licenses, generated bundle, links, action
+- [x] Inspect repository/history for secrets and private topology.
+- [x] Review dependencies, pinning, licenses, generated wheel, links, action
       metadata, and sample workflows.
-- [ ] Recheck official GitHub semantics, related tools, and naming on launch day.
+- [x] Recheck official GitHub semantics, related tools, and naming on launch day.
 - [ ] Prepare release notes, security FAQ, Show HN maker comment, native posts,
       technical article, and Habr adaptation.
 
