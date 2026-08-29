@@ -75,16 +75,16 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: korovin-aa97/ci-evidence-gate@RELEASE_COMMIT_SHA
+      - uses: korovin-aa97/ci-evidence-gate@12363c8967003e8fd61e29b3d303e640fd3eac04 # v0.1.0
         id: evidence
         with:
           base-sha: ${{ github.event.pull_request.base.sha }}
           head-sha: ${{ github.event.pull_request.head.sha }}
 ```
 
-`RELEASE_COMMIT_SHA` is replaced with the reviewed v0.1.0 commit in the release
-copy of this file. Never use `@main`; resolve a release tag and pin the full
-commit SHA. See [immutable pinning](docs/PINNING.md).
+The full commit above is the reviewed v0.1.0 Action implementation. Never use
+`@main`; resolve each release tag and pin its full commit SHA. See
+[immutable pinning](docs/PINNING.md).
 
 The Action needs only `contents: read`, `checks: read`, and `actions: read`. It
 does not write checks, comments, pull requests, repository contents, or

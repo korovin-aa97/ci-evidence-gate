@@ -4,7 +4,7 @@ Tags and branches are readable but movable Git references. Production consumers
 should pin the Action to the full 40-character commit printed in each release:
 
 ```yaml
-- uses: korovin-aa97/ci-evidence-gate@RELEASE_COMMIT_SHA # v0.1.0
+- uses: korovin-aa97/ci-evidence-gate@12363c8967003e8fd61e29b3d303e640fd3eac04 # v0.1.0
 ```
 
 To resolve independently:
