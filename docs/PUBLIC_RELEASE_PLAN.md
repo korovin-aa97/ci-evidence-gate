@@ -1,7 +1,7 @@
 # CI Evidence Gate — Public Release Plan
 
-Status: public v0.1.1; owner authorized and released on 2026-08-29. Marketplace
-account acceptance and external launch posts remain separate human/account
+Status: public and listed in GitHub Marketplace; v0.1.3 post-release security
+audit completed on 2026-08-30. External launch posts remain separate owner
 actions.
 
 ## Release thesis
@@ -55,7 +55,8 @@ cannot be bypassed by the documented untrusted-PR capabilities.
 
 ## Phase 2 — Implement exact GitHub evidence
 
-- [x] Query check suites/runs for the exact head SHA with least privilege.
+- [x] Query check runs plus concrete Actions workflow jobs for the exact head
+      SHA with least privilege.
 - [x] Validate check identity, app/workflow identity, conclusion, attempt,
       freshness, head SHA, and required mapping.
 - [x] Reject GitHub jobs whose conclusion is `skipped`; semantic no-op detection
@@ -110,14 +111,14 @@ Do not execute without explicit owner authorization.
 
 1. [x] Change repository visibility to public.
 2. [x] Verify license, README/demo, RFC, description, topics, and clean history.
-3. [x] Enable secret scanning, push protection, vulnerability reporting, code
+3. [x] Enable secret scanning, push protection, private vulnerability reporting, code
        scanning, and dependency review where available.
 4. [ ] Upload social preview and pin the repository.
 5. [x] Run a disposable public PR smoke through the real Checks/Actions APIs;
        all `test`, `lint`, `evidence`, and `dependency-review` checks passed.
 6. [x] Tag immutable `v0.1.0`, create human release notes, and publish the exact
        full commit SHA users should pin.
-7. [ ] Submit to GitHub Marketplace if eligibility and metadata are current.
+7. [x] Submit to GitHub Marketplace and verify the public listing.
 8. [ ] Submit to relevant Actions, CI, supply-chain, and agent-tool lists.
 
 ## Phase 6 — Launch content, days 2–14

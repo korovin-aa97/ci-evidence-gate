@@ -27,7 +27,15 @@ app_slug = "github-actions"
 allowed_conclusions = ["success"]
 events = ["pull_request"]
 
+[[checks]]
+id = "quality"
+name = "quality"
+workflow = ".github/workflows/ci.yml"
+app_slug = "github-actions"
+allowed_conclusions = ["success"]
+events = ["pull_request"]
+
 [[surfaces]]
 name = "repository"
 patterns = ["**"]
-checks = ["test", "lint"]
+checks = ["test", "lint", "quality"]

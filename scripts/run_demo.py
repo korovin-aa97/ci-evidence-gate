@@ -4,7 +4,8 @@
 from __future__ import annotations
 
 import datetime as dt
-import subprocess
+import shutil
+import subprocess  # nosec B404
 import tempfile
 from pathlib import Path
 
@@ -30,8 +31,16 @@ checks = ["test"]
 
 
 def git(repo: Path, *arguments: str) -> str:
-    return subprocess.run(
-        ["git", *arguments], cwd=repo, check=True, capture_output=True, text=True
+    # Fixed Git executable and arguments are limited to this disposable fixture.
+    executable = shutil.which("git")
+    if not executable:
+        raise RuntimeError("git executable was not found on PATH")
+    return subprocess.run(  # nosec B603
+        [executable, *arguments],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+        text=True,
     ).stdout.strip()
 
 
@@ -60,14 +69,15 @@ def make_repo(root: Path, label: str, changed_path: str) -> tuple[Path, str, str
     return repo, base, git(repo, "rev-parse", "HEAD")
 
 
-def evidence(head: str, conclusion: str) -> FixtureProvider:
+def evidence(base: str, head: str, conclusion: str) -> FixtureProvider:
     completed = dt.datetime.now(dt.UTC).isoformat().replace("+00:00", "Z")
+    pull_requests = [{"number": 1, "base": {"sha": base}, "head": {"sha": head}}]
     return FixtureProvider(
         {
             "schema": "ci-evidence-fixture/v1",
             "check_runs": [
                 {
-                    "id": 12,
+                    "id": 56,
                     "name": "test",
                     "head_sha": head,
                     "status": "completed",
@@ -75,6 +85,7 @@ def evidence(head: str, conclusion: str) -> FixtureProvider:
                     "completed_at": completed,
                     "details_url": "https://github.com/example/demo/actions/runs/34/job/56",
                     "app": {"id": 15368, "slug": "github-actions"},
+                    "pull_requests": pull_requests,
                 }
             ],
             "workflow_runs": {
@@ -84,6 +95,18 @@ def evidence(head: str, conclusion: str) -> FixtureProvider:
                     "path": ".github/workflows/ci.yml",
                     "event": "pull_request",
                     "run_attempt": 1,
+                    "created_at": completed,
+                    "pull_requests": pull_requests,
+                }
+            },
+            "workflow_jobs": {
+                "56": {
+                    "id": 56,
+                    "run_id": 34,
+                    "run_attempt": 1,
+                    "head_sha": head,
+                    "name": "test",
+                    "check_run_url": "https://api.github.com/repos/example/demo/check-runs/56",
                 }
             },
         }
@@ -98,7 +121,7 @@ def scenario(root: Path, label: str, changed_path: str, conclusion: str) -> None
         base_sha=base,
         head_sha=head,
         manifest_path=".github/ci-evidence.toml",
-        provider=evidence(head, conclusion),
+        provider=evidence(base, head, conclusion),
         now=dt.datetime.now(dt.UTC),
     )
     codes = ", ".join(item["code"] for item in receipt["findings"]) or "none"

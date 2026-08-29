@@ -43,8 +43,16 @@ def main() -> None:
             r'__version__ = "([^"]+)"',
             (ROOT / "src/ci_evidence_gate/__init__.py").read_text(),
         ).group(1),  # type: ignore[union-attr]
+        re.search(
+            r'TOOL_VERSION = "([^"]+)"',
+            (ROOT / "src/ci_evidence_gate/evaluator.py").read_text(),
+        ).group(1),  # type: ignore[union-attr]
+        re.search(
+            r'"User-Agent": "ci-evidence-gate/([^"]+)"',
+            (ROOT / "src/ci_evidence_gate/github.py").read_text(),
+        ).group(1),  # type: ignore[union-attr]
     }
-    if versions != {"0.1.1"}:
+    if versions != {"0.1.3"}:
         fail(f"inconsistent versions: {sorted(versions)}")
 
     metadata = (ROOT / "action.yml").read_text(encoding="utf-8")

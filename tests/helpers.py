@@ -69,21 +69,34 @@ def make_repo(root: Path, changed_path: str = "src/app.py") -> tuple[Path, str, 
 
 
 def fixture(
-    head: str, *, conclusion: str = "success", attempt: int = 1, hours_old: int = 0
+    head: str,
+    *,
+    base: str,
+    conclusion: str = "success",
+    attempt: int = 1,
+    hours_old: int = 0,
 ) -> dict[str, object]:
     completed = dt.datetime.now(dt.UTC) - dt.timedelta(hours=hours_old)
+    pull_requests = [
+        {
+            "number": 1,
+            "base": {"sha": base},
+            "head": {"sha": head},
+        }
+    ]
     return {
         "schema": "ci-evidence-fixture/v1",
         "check_runs": [
             {
-                "id": 101 + attempt,
+                "id": 102,
                 "name": "test",
                 "head_sha": head,
                 "status": "completed",
                 "conclusion": conclusion,
                 "completed_at": completed.isoformat().replace("+00:00", "Z"),
-                "details_url": "https://github.com/example/repo/actions/runs/77/job/88",
+                "details_url": "https://github.com/example/repo/actions/runs/77/job/102",
                 "app": {"id": 15368, "slug": "github-actions"},
+                "pull_requests": pull_requests,
             }
         ],
         "workflow_runs": {
@@ -93,6 +106,18 @@ def fixture(
                 "path": ".github/workflows/ci.yml",
                 "event": "pull_request",
                 "run_attempt": attempt,
+                "created_at": completed.isoformat().replace("+00:00", "Z"),
+                "pull_requests": pull_requests,
+            }
+        },
+        "workflow_jobs": {
+            "102": {
+                "id": 102,
+                "run_id": 77,
+                "run_attempt": attempt,
+                "head_sha": head,
+                "name": "test",
+                "check_run_url": "https://api.github.com/repos/example/repo/check-runs/102",
             }
         },
     }

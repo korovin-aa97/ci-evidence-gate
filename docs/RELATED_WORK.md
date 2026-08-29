@@ -1,6 +1,6 @@
 # Related work and residual scope
 
-Verified: 2026-08-29. This is a factual category check, not a claim that native
+Verified: 2026-08-30. This is a factual category check, not a claim that native
 GitHub CI is broken.
 
 ## GitHub-native controls
@@ -14,7 +14,17 @@ GitHub CI is broken.
 - [Checks REST API](https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference)
   exposes check runs for a commit ref with Checks read permission; the
   [workflow-runs API](https://docs.github.com/en/rest/actions/workflow-runs)
-  exposes head SHA and workflow-run identity.
+  exposes head SHA and workflow-run identity, while the
+  [workflow-jobs API](https://docs.github.com/en/rest/actions/workflow-jobs)
+  binds each check to its concrete rerun attempt.
+- [REST API rate-limit guidance](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api)
+  treats `403`/`429` with reset/retry headers as a stop condition. This gate
+  reports those hints and fails invalid instead of retrying immediately.
+- [REST API version support](https://docs.github.com/en/rest/about-the-rest-api/api-versions)
+  lists `2022-11-28` as supported on GitHub.com through March 10, 2028; it also
+  remains the compatible default for current GitHub Enterprise Server. The
+  Action therefore keeps that explicit default instead of assuming the newer
+  cloud-only version.
 - [Secure use guidance](https://docs.github.com/en/actions/reference/security/secure-use)
   recommends minimum token permissions, full-SHA pinning, and warns against
   privileged triggers that execute untrusted code.
@@ -22,8 +32,9 @@ GitHub CI is broken.
   map every changed source path to required job evidence.
 
 Residual scope: base-held path-to-check policy, exact check/workflow/event/app
-identity for the latest attempt, three fail-closed verdicts, and a portable
-receipt in one small read-only Action.
+identity for the latest concrete job attempt and pull-request base/head,
+three fail-closed verdicts, and a portable receipt in one small read-only
+Action.
 
 ## Adjacent tools
 
@@ -55,5 +66,5 @@ receipt in one small read-only Action.
 ## Decision
 
 The niche is narrower than the original RFC idea because adjacent agent proof
-gates now exist. v0.1.0 remains useful as a small infrastructure primitive. It
+gates now exist. v0.1 remains useful as a small infrastructure primitive. It
 will not expand into an agent workflow platform unless adopters ask for it.
