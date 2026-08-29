@@ -12,4 +12,4 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/dependency-review-action@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
+      - uses: actions/dependency-review-action@fddeee1a7ece751b577e409a89057319e3172939 # v4
