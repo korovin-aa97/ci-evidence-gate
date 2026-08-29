@@ -58,7 +58,7 @@ class GitHubClient:
             headers={
                 "Accept": "application/vnd.github+json",
                 "Authorization": f"Bearer {self.token}",
-                "User-Agent": "ci-evidence-gate/0.1.0",
+                "User-Agent": "ci-evidence-gate/0.1.1",
                 "X-GitHub-Api-Version": self.api_version,
             },
         )

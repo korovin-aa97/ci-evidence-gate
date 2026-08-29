@@ -3,6 +3,14 @@
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project uses semantic versioning.
 
+## [0.1.1] - 2026-08-29
+
+### Changed
+
+- Pin the current official `actions/checkout` v7.0.1 and
+  `actions/setup-python` v7.0.0 releases by full commit SHA.
+- No manifest, receipt, verdict, permission, or runtime behavior change.
+
 ## [0.1.0] - 2026-08-29
 
 ### Added
@@ -17,3 +25,4 @@ This project uses semantic versioning.
 - fail-closed fixture tests, Action metadata linting and pinned CI dependencies.
 
 [0.1.0]: https://github.com/korovin-aa97/ci-evidence-gate/releases/tag/v0.1.0
+[0.1.1]: https://github.com/korovin-aa97/ci-evidence-gate/releases/tag/v0.1.1

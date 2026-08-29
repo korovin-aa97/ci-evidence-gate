@@ -1,6 +1,6 @@
 # CI Evidence Gate — Public Release Plan
 
-Status: public v0.1.0; owner authorized and released on 2026-08-29. Marketplace
+Status: public v0.1.1; owner authorized and released on 2026-08-29. Marketplace
 account acceptance and external launch posts remain separate human/account
 actions.
 

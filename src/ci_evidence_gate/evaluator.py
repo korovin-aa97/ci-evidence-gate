@@ -16,7 +16,7 @@ from .models import CheckPolicy, CheckResult, Finding
 from .patterns import matches
 
 RECEIPT_SCHEMA = "ci-evidence-receipt/v1"
-TOOL_VERSION = "0.1.0"
+TOOL_VERSION = "0.1.1"
 
 
 def _parse_time(value: object, context: str) -> dt.datetime:

@@ -44,7 +44,7 @@ def main() -> None:
             (ROOT / "src/ci_evidence_gate/__init__.py").read_text(),
         ).group(1),  # type: ignore[union-attr]
     }
-    if versions != {"0.1.0"}:
+    if versions != {"0.1.1"}:
         fail(f"inconsistent versions: {sorted(versions)}")
 
     metadata = (ROOT / "action.yml").read_text(encoding="utf-8")
