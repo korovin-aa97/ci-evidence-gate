@@ -75,14 +75,14 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: korovin-aa97/ci-evidence-gate@12363c8967003e8fd61e29b3d303e640fd3eac04 # v0.1.0
+      - uses: korovin-aa97/ci-evidence-gate@f4e1343d7122252d8617191d964b9d5db3be0b4f # v0.1.1
         id: evidence
         with:
           base-sha: ${{ github.event.pull_request.base.sha }}
           head-sha: ${{ github.event.pull_request.head.sha }}
 ```
 
-The full commit above is the reviewed v0.1.0 Action implementation. Never use
+The full commit above is the reviewed v0.1.1 Action implementation. Never use
 `@main`; resolve each release tag and pin its full commit SHA. See
 [immutable pinning](docs/PINNING.md).
 

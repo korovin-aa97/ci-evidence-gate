@@ -4,13 +4,13 @@ Tags and branches are readable but movable Git references. Production consumers
 should pin the Action to the full 40-character commit printed in each release:
 
 ```yaml
-- uses: korovin-aa97/ci-evidence-gate@12363c8967003e8fd61e29b3d303e640fd3eac04 # v0.1.0
+- uses: korovin-aa97/ci-evidence-gate@f4e1343d7122252d8617191d964b9d5db3be0b4f # v0.1.1
 ```
 
 To resolve independently:
 
 ```bash
-git ls-remote https://github.com/korovin-aa97/ci-evidence-gate.git refs/tags/v0.1.0 refs/tags/v0.1.0^{}
+git ls-remote https://github.com/korovin-aa97/ci-evidence-gate.git refs/tags/v0.1.1 refs/tags/v0.1.1^{}
 ```
 
 For an annotated tag, use the peeled `^{}` commit. Review the diff and release
