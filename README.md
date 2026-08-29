@@ -3,7 +3,9 @@
 [![CI](https://github.com/korovin-aa97/ci-evidence-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/korovin-aa97/ci-evidence-gate/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Exact-SHA, changed-surface CI evidence for pull requests.**
+![CI Evidence Gate: changed files flow to exact required checks and a sufficient, insufficient, or invalid receipt](docs/assets/ci-evidence-gate-hero.svg)
+
+**Trust the checks. Prove the change.**
 
 A green job name alone does not say which commit produced it, which workflow
 produced it, or whether the changed files were meant to be tested. CI Evidence
@@ -19,6 +21,13 @@ It answers a narrow question:
 It does **not** prove that tests are correct, that a program is correct, or that
 branch protection is configured correctly.
 
+In plain language, the Action:
+
+1. looks at which files changed;
+2. finds the checks those files are required to pass;
+3. confirms the checks belong to this exact change and produces a reviewable
+   receipt.
+
 ## Three fail-closed verdicts
 
 | Verdict | Meaning | Exit |
@@ -26,16 +35,6 @@ branch protection is configured correctly.
 | `sufficient` | Every changed path maps to declared evidence, and the latest matching attempt is successful and fresh. | 0 |
 | `insufficient` | The evaluation is trustworthy, but coverage or required evidence is missing, stale, skipped, incomplete, or unsuccessful. | 1 |
 | `invalid` | The judge/policy changed, inputs are malformed, provenance is ambiguous, or evidence cannot be retrieved safely. | 2 |
-
-```text
-changed paths ──> base-commit manifest ──> required check identities
-       │                                        │
-       └──────── exact head SHA ──> GitHub Checks + Actions APIs
-                                                │
-                              sufficient / insufficient / invalid
-                                                │
-                                      versioned JSON receipt
-```
 
 ## Quickstart
 
