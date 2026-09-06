@@ -87,8 +87,8 @@ sample valid proposal receives a reproducible sufficient receipt.
 - [x] Prepare immutable release tags and document SHA pinning plus update tools.
 - [x] Add Marketplace metadata for post-public submission after live smoke.
       repository.
-- [ ] Generate a receipt-focused social preview and short demo.
-- [ ] Use accurate topics such as `github-actions`, `ci`, `supply-chain`,
+- [x] Generate a receipt-focused social preview and short demo.
+- [x] Use accurate topics such as `github-actions`, `ci`, `supply-chain`,
       `policy-as-code`, `attestation`, `ai-agents`, and `developer-tools`.
 
 ## Phase 4 — Pre-public security rehearsal

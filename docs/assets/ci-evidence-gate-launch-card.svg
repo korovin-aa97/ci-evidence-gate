@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">CI Evidence Gate</title>
+  <desc id="description">A 1200 by 630 launch card showing changed files flowing through exact required checks into a reviewable JSON receipt.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080b1a"/>
+      <stop offset="0.55" stop-color="#0d2139"/>
+      <stop offset="1" stop-color="#102f50"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#35e5d2"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#b7c7ff" stroke-opacity="0.045"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#03040c" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="30" fill="url(#background)"/>
+  <rect width="1200" height="630" rx="30" fill="url(#grid)"/>
+  <circle cx="1100" cy="560" r="250" fill="#60a5fa" opacity="0.07"/>
+
+  <text x="60" y="62" fill="#76f3e5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21" font-weight="700" letter-spacing="1.1">OPEN SOURCE · READ ONLY · FAILS CLOSED</text>
+  <text x="60" y="138" fill="#f7f8ff" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="66" font-weight="800" letter-spacing="-2.2">CI Evidence Gate</text>
+  <text x="60" y="190" fill="#c8d2f0" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="600">A green check should prove the right change.</text>
+
+  <g filter="url(#shadow)" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+    <rect x="60" y="258" width="262" height="200" rx="22" fill="#121d36" stroke="#355a79" stroke-width="2"/>
+    <rect x="82" y="282" width="84" height="28" rx="14" fill="#163b45"/>
+    <text x="124" y="302" text-anchor="middle" fill="#76f3e5" font-size="14" font-weight="800" letter-spacing="1.1">INPUT</text>
+    <path d="M88 346h31l15 15v45H88z" fill="none" stroke="#8fa6d4" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M119 346v16h15" fill="none" stroke="#8fa6d4" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M98 377h26M98 389h21" stroke="#35e5d2" stroke-width="3" stroke-linecap="round"/>
+    <text x="150" y="369" fill="#f7f8ff" font-size="23" font-weight="750">Changed files</text>
+    <text x="150" y="402" fill="#9eadd1" font-size="16">What this PR touches</text>
+
+    <path d="M322 358h48" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M358 347l14 11-14 11" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="374" y="258" width="294" height="200" rx="22" fill="#121d36" stroke="#3d79a8" stroke-width="2"/>
+    <rect x="396" y="282" width="114" height="28" rx="14" fill="#163b5d"/>
+    <text x="453" y="302" text-anchor="middle" fill="#93c5fd" font-size="14" font-weight="800" letter-spacing="1.1">EVIDENCE</text>
+    <circle cx="432" cy="374" r="27" fill="none" stroke="#8fa6d4" stroke-width="3"/>
+    <path d="M420 374l9 9 17-20" fill="none" stroke="#35e5d2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="476" y="361" fill="#f7f8ff" font-size="23" font-weight="750">Exact required</text>
+    <text x="476" y="392" fill="#f7f8ff" font-size="23" font-weight="750">checks</text>
+    <text x="476" y="423" fill="#9eadd1" font-size="13">Right commit · right workflow</text>
+
+    <path d="M668 358h48" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M704 347l14 11-14 11" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="720" y="242" width="420" height="232" rx="24" fill="#17385a" stroke="url(#accent)" stroke-width="2.5"/>
+    <rect x="744" y="268" width="90" height="28" rx="14" fill="#183e65"/>
+    <text x="789" y="288" text-anchor="middle" fill="#bfdbfe" font-size="14" font-weight="800" letter-spacing="1.1">RESULT</text>
+    <path d="M756 326h34l10 10v50h-44z" fill="none" stroke="#9eadd1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M790 326v11h10" fill="none" stroke="#9eadd1" stroke-width="3"/>
+    <path d="M766 354h24M766 366h24" stroke="#35e5d2" stroke-width="3" stroke-linecap="round"/>
+    <text x="820" y="348" fill="#f7f8ff" font-size="25" font-weight="750">Reviewable receipt</text>
+    <text x="820" y="381" fill="#aebbe0" font-size="17">One clear, fail-closed verdict</text>
+
+    <rect x="744" y="420" width="120" height="34" rx="17" fill="#123552" stroke="#7dd3fc"/>
+    <text x="804" y="443" text-anchor="middle" fill="#bae6fd" font-size="13" font-weight="800">SUFFICIENT</text>
+    <rect x="874" y="420" width="136" height="34" rx="17" fill="#163e65" stroke="#60a5fa"/>
+    <text x="942" y="443" text-anchor="middle" fill="#bfdbfe" font-size="13" font-weight="800">INSUFFICIENT</text>
+    <rect x="1020" y="420" width="96" height="34" rx="17" fill="#1d4770" stroke="#93c5fd"/>
+    <text x="1068" y="443" text-anchor="middle" fill="#dbeafe" font-size="13" font-weight="800">INVALID</text>
+  </g>
+
+  <text x="60" y="548" fill="#9eadd1" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20">Exact SHA · base-commit policy · read-only GitHub APIs · zero telemetry</text>
+  <rect x="60" y="582" width="1080" height="2" rx="1" fill="url(#accent)" opacity="0.36"/>
+</svg>

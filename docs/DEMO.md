@@ -19,6 +19,11 @@ fresh successful exact-SHA check. The insufficient case has the same authenticat
 identity but a failed conclusion. The invalid case modifies the protected gate
 workflow while policy is loaded from the base commit.
 
+![Terminal demo showing sufficient, insufficient, and invalid verdicts](assets/ci-evidence-gate-demo.gif)
+
+The complete [synthetic sufficient receipt](../examples/sample-receipt.json) is
+kept in the repository for inspection and release validation.
+
 This demo uses an in-memory fixture provider and never contacts GitHub. The
 published Action cannot enable fixture mode.
 

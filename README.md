@@ -5,7 +5,10 @@
 
 ![CI Evidence Gate: changed files flow to exact required checks and a sufficient, insufficient, or invalid receipt](docs/assets/ci-evidence-gate-hero.svg)
 
-**Trust the checks. Prove the change.**
+**A green check should prove the right change.**
+
+[Run the 60-second demo](#try-it-locally) ·
+[Inspect a sample receipt](examples/sample-receipt.json)
 
 A green job name alone does not say which commit produced it, which workflow
 produced it, or whether the changed files were meant to be tested. CI Evidence
@@ -20,6 +23,9 @@ It answers a narrow question:
 
 It does **not** prove that tests are correct, that a program is correct, or that
 branch protection is configured correctly.
+
+For a small repository with one obvious workflow, native branch protection may
+already be enough.
 
 In plain language, the Action:
 
@@ -74,15 +80,15 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: korovin-aa97/ci-evidence-gate@594938ec2ebc264c34e86a5e572375a0ac53b0ee # v0.1.3
+      - uses: korovin-aa97/ci-evidence-gate@0a7afe3091057f4913dffa0d970ecb3937ba8c9b # v0.1.3
         id: evidence
         with:
           base-sha: ${{ github.event.pull_request.base.sha }}
           head-sha: ${{ github.event.pull_request.head.sha }}
 ```
 
-The full commit above is the reviewed v0.1.3 Action implementation. Never use
-`@main`; resolve each release tag and pin its full commit SHA. See
+The full commit above is the immutable commit peeled from the reviewed v0.1.3
+release tag. Never use `@main`; resolve each release tag and pin its full commit SHA. See
 [immutable pinning](docs/PINNING.md).
 
 The Action needs only `contents: read`, `checks: read`, and `actions: read`. It
@@ -160,6 +166,8 @@ PYTHONPATH=src python3 scripts/run_demo.py
 It builds disposable Git fixture repositories and demonstrates `sufficient`,
 `insufficient`, and `invalid`. Offline fixtures are deliberately not accepted
 as an Action input; production evaluation always queries GitHub directly.
+The [synthetic sample receipt](examples/sample-receipt.json) shows the complete
+machine-readable output of the sufficient scenario.
 
 ## Trust model and limitations
 
@@ -191,6 +199,8 @@ sources are in [Related work](docs/RELATED_WORK.md).
 - Security reports: [SECURITY.md](SECURITY.md).
 - Contributions: [CONTRIBUTING.md](CONTRIBUTING.md).
 - Changes: [CHANGELOG.md](CHANGELOG.md).
+- Questions or a successful deployment to share:
+  [open an issue](https://github.com/korovin-aa97/ci-evidence-gate/issues/new/choose).
 
 Built from operating a mixed Claude/Codex production fleet. The implementation
 and examples are generic; no private fleet code or topology is included.

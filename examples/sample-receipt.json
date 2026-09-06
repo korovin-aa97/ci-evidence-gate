@@ -1,0 +1,66 @@
+{
+  "changed_files": [
+    {
+      "path": "src/app.py",
+      "previous_path": null,
+      "status": "M"
+    }
+  ],
+  "check_evidence": [
+    {
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "check_id": "test",
+      "check_name": "test",
+      "check_run_id": 56,
+      "completed_at": "2026-08-31T09:57:06.234593Z",
+      "conclusion": "success",
+      "details_url": "https://github.com/example/demo/actions/runs/34/job/56",
+      "event": "pull_request",
+      "expected_name": "test",
+      "run_attempt": 1,
+      "state": "observed",
+      "workflow_path": ".github/workflows/ci.yml",
+      "workflow_run_id": 34
+    }
+  ],
+  "evaluated_at": "2026-08-31T10:00:00Z",
+  "findings": [],
+  "matched_surfaces": [
+    {
+      "changed_files": [
+        "src/app.py"
+      ],
+      "name": "python",
+      "required_checks": [
+        "test"
+      ]
+    }
+  ],
+  "policy": {
+    "path": ".github/ci-evidence.toml",
+    "protected_patterns": [
+      ".github/ci-evidence.toml",
+      ".github/workflows/evidence.yml"
+    ],
+    "schema": "ci-evidence-manifest/v1",
+    "sha256": "f36c798696fc9bdee4c54c2bdbae80114d6b0574c5bb77267fc382d9cb3ca9c7",
+    "source_ref": "c127e8f65868c5c6c2352c85d0cbaf12ba82f60f"
+  },
+  "protected_changes": [],
+  "repository": "example/demo",
+  "required_checks": [
+    "test"
+  ],
+  "schema": "ci-evidence-receipt/v1",
+  "subject": {
+    "base_sha": "c127e8f65868c5c6c2352c85d0cbaf12ba82f60f",
+    "head_sha": "0a0cda9b74edee8c39ce26d5ff6b769cd6e8fd77"
+  },
+  "tool": {
+    "name": "ci-evidence-gate",
+    "version": "0.1.3"
+  },
+  "uncovered_files": [],
+  "verdict": "sufficient"
+}

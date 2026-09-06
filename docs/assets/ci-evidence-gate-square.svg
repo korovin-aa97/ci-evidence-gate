@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title description">
+  <title id="title">CI Evidence Gate</title>
+  <desc id="description">A square launch card for exact-SHA, changed-surface CI evidence.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080b1a"/>
+      <stop offset="0.55" stop-color="#0d2139"/>
+      <stop offset="1" stop-color="#102f50"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#35e5d2"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#b7c7ff" stroke-opacity="0.05"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#03040c" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="1080" rx="48" fill="url(#background)"/>
+  <rect width="1080" height="1080" rx="48" fill="url(#grid)"/>
+  <circle cx="954" cy="922" r="330" fill="#60a5fa" opacity="0.07"/>
+
+  <text x="72" y="92" fill="#76f3e5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="27" font-weight="700" letter-spacing="1.4">OPEN SOURCE · READ ONLY · FAILS CLOSED</text>
+
+  <g filter="url(#shadow)">
+    <path d="M540 154l142 52v116c0 107-59 184-142 225-83-41-142-118-142-225V206z" fill="#122846" stroke="url(#accent)" stroke-width="6"/>
+    <path d="M470 332l46 47 99-116" fill="none" stroke="#35e5d2" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="540" y="648" text-anchor="middle" fill="#f7f8ff" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="86" font-weight="800" letter-spacing="-2.8">CI Evidence Gate</text>
+  <text x="540" y="720" text-anchor="middle" fill="#c8d2f0" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="37" font-weight="600">A green check should prove the right change.</text>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="750">
+    <rect x="108" y="800" width="240" height="72" rx="22" fill="#121d36" stroke="#355a79" stroke-width="2"/>
+    <text x="228" y="845" text-anchor="middle" fill="#f7f8ff">CHANGED FILES</text>
+    <path d="M348 836h52" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M386 823l16 13-16 13" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="402" y="800" width="276" height="72" rx="22" fill="#121d36" stroke="#3d79a8" stroke-width="2"/>
+    <text x="540" y="845" text-anchor="middle" fill="#f7f8ff">EXACT CHECKS</text>
+    <path d="M678 836h52" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M716 823l16 13-16 13" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="732" y="800" width="240" height="72" rx="22" fill="#17385a" stroke="#60a5fa" stroke-width="2"/>
+    <text x="852" y="845" text-anchor="middle" fill="#f7f8ff">JSON RECEIPT</text>
+  </g>
+
+  <text x="540" y="953" text-anchor="middle" fill="#9eadd1" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="29">Exact SHA · base-commit policy · zero telemetry</text>
+  <rect x="72" y="1014" width="936" height="3" rx="1.5" fill="url(#accent)" opacity="0.44"/>
+</svg>

@@ -1,8 +1,8 @@
 # Sample repository
 
 Copy the `.github` directory into a small Python repository and adjust surface
-patterns/check names. The gate is pinned to the reviewed v0.1.3 implementation
-commit. The gate job deliberately runs with
+patterns/check names. The gate is pinned to the immutable commit peeled from
+the reviewed v0.1.3 release tag. The gate job deliberately runs with
 `if: always()` after the evidence-producing jobs so it can explain failures.
 
 Protect both `.github/ci-evidence.toml` and `.github/workflows/ci.yml`. Make the
