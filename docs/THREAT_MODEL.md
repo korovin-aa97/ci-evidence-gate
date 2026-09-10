@@ -21,6 +21,7 @@ runner, and repository rules are trustworthy.
 | Same check name from another workflow/app | Exact app slug, workflow path, event, and run ID correlation are required. | GitHub required-check UI itself remains less specific in some plans. |
 | Older green rerun hides newer failure | A check is correlated to its concrete Actions job. The newest workflow run is selected first, then its highest job `run_attempt`; ambiguity is invalid. | Parallel duplicate job names are unsupported and invalid. |
 | Skipped/no-op work looks green | `skipped` is rejected and only explicit conclusions are accepted. | A job can run a no-op and report success; v1 cannot inspect semantic test adequacy. |
+| Fresh check contains a stale internal citation | The outer check is still bound to the exact head SHA, workflow, job and attempt. | v1 does not parse producer-authored reports. Producers must resolve stable anchors against the exact blob and render positional citations afterward. |
 | Candidate modifies manifest | Manifest bytes come from base SHA; manifest path auto-protects itself. | Initial policy installation is an owner operation. |
 | Candidate modifies tests/workflow/verifier | Base manifest protected globs make the verdict invalid. | If the candidate can prevent the gate workflow from starting, in-process detection never runs. Use independent policy deployment. |
 | Deleted/renamed paths evade matching | NUL-safe diff includes deletions and both rename/copy paths. | Submodule contents are opaque; the submodule path itself must be mapped. |

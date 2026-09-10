@@ -166,6 +166,8 @@ Deploy one of:
 
 - proving that tests exercise meaningful behavior or program correctness;
 - running tests, interpreting logs, or trusting producer-authored reports;
+- validating semantic claims or citation anchors inside producer-authored
+  check output, logs, or review comments;
 - replacing GitHub branch protection, rulesets, attestations, or code review;
 - accepting arbitrary CI providers or legacy commit statuses in v1;
 - signing receipts or surviving a compromised runner in v1;

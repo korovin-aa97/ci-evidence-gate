@@ -182,6 +182,15 @@ against GitHub-owned event context before the token is used. The manifest path
 and gate invocation still belong to the deployment boundary, so keep them in a
 trusted required workflow or under independent review.
 
+The gate validates the identity, status, attempt, and freshness of a check. It
+does not parse producer-authored logs, review comments, or citations to decide
+whether their semantic claims are current. A review can therefore be fresh for
+the exact head SHA while a stored line citation inside it points to moved
+content. Evidence producers should use stable rule IDs or content anchors and
+render line ranges from the exact referenced blob. Fleet Failure Atlas models
+this adjacent failure as
+[FFA-005](https://github.com/korovin-aa97/fleet-failure-atlas/blob/main/patterns/005-fresh-review-stale-citation.md).
+
 Read [RFC](docs/RFC.md), [Threat model](docs/THREAT_MODEL.md), and
 [Deployment](docs/DEPLOYMENT.md) before treating the verdict as a merge gate.
 
