@@ -3,6 +3,15 @@
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project uses semantic versioning.
 
+## [Unreleased]
+
+### Documentation
+
+- Add a deployable pattern for making test applicability nameable and requiring
+  a separate validator over structured test counts.
+- Clarify that missing prerequisites are unavailable evidence, not an implicit
+  non-applicable result, and that manifest v1 does not parse producer reports.
+
 ## [0.1.3] - 2026-08-30
 
 ### Fixed

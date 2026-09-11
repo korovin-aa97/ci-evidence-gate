@@ -173,6 +173,11 @@ Deploy one of:
 - signing receipts or surviving a compromised runner in v1;
 - detecting a job that executes a no-op command but still reports success.
 
+The non-goal above can be narrowed operationally by adding a separate required
+check that validates structured producer output. See
+[Detecting green no-op test jobs](NO_OP_TEST_EVIDENCE.md). This remains an
+additional evidence producer; manifest v1 does not parse test reports.
+
 ## Compatibility
 
 Schema identifiers are versioned. Adding optional receipt fields is compatible;

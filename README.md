@@ -191,6 +191,12 @@ render line ranges from the exact referenced blob. Fleet Failure Atlas models
 this adjacent failure as
 [FFA-005](https://github.com/korovin-aa97/fleet-failure-atlas/blob/main/patterns/005-fresh-review-stale-citation.md).
 
+An exact-head job can also report success after executing zero required tests.
+CI Evidence Gate cannot infer that from the outer check. Use a separate named
+validator over structured test output, then require that validator in the
+manifest. The [green no-op recipe](docs/NO_OP_TEST_EVIDENCE.md) defines the
+applicability boundary and links the executable FFA-006 model.
+
 Read [RFC](docs/RFC.md), [Threat model](docs/THREAT_MODEL.md), and
 [Deployment](docs/DEPLOYMENT.md) before treating the verdict as a merge gate.
 
